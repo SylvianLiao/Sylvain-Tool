@@ -1,0 +1,133 @@
+﻿using System;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using GameFramework;
+
+public class Slot_SomeoneChat : MonoBehaviour {
+	//L----
+	public UISprite	L_spriteIcon	= null;
+	public UILabel	L_labelName		= null;
+	public UILabel	L_labelContents	= null;
+	public UIButton	L_btnIcon		= null;
+	//R----
+	public UISprite	R_spriteIcon	= null;
+	public UILabel	R_labelName		= null;
+	public UILabel	R_labelContents	= null;
+	public UIButton	R_btnIcon		= null;
+
+
+	public long		ui64Serial		= 0;
+	public int 		iSpeakerID		= 0;
+	public string	sSprakerName	= null;
+	public int 		iIconID			= 0;
+	public string	sContents		= null;
+	public string	Targetname		= null;
+	public DateTime	savetime;
+	public ENUM_MESSAGESLOTTYPE	emMsgSlotType;
+	public ENUM_MESSAGEBOARDTYPE emMsgBdType;
+
+	//---------------------------------------------------------------------
+	void Start () 
+	{
+	}
+	//---------------------------------------------------------------------
+	//初始化
+	public void Clear()
+	{
+		ui64Serial		= 0;
+		iSpeakerID		= 0;
+		sSprakerName	= null;
+		iIconID			= 0;
+		sContents		= null;
+		Targetname		= null;
+		savetime		= DateTime.Now;
+		emMsgSlotType 	= ENUM_MESSAGESLOTTYPE.ENUM_MESSAGESLOT_NORMAL;
+		emMsgBdType	 	= ENUM_MESSAGEBOARDTYPE.ENUM_MESSAGEBOARD_NULL;
+	}
+	//---------------------------------------------------------------------
+	//設定SLOT內容
+	public void SetSlot(S_chatSlot sChatSlot,ChatSlotRLType RLType)
+	{
+		ui64Serial		= sChatSlot.ui64Serial;
+		iSpeakerID		= sChatSlot.iSpeakerID;
+		sSprakerName	= sChatSlot.sSprakerName;
+		iIconID			= sChatSlot.iIconID;
+		sContents		= sChatSlot.sContents;
+		Targetname		= sChatSlot.sTargetname;
+		savetime		= sChatSlot.time;
+		emMsgSlotType	= sChatSlot.emMsgSlotType;
+		emMsgBdType		= sChatSlot.emMsgBdType;
+
+		SetDisPlay(RLType);
+	}
+	//---------------
+	public void SetSlot(Slot_SomeoneChat slot,ChatSlotRLType RLType)
+	{
+		ui64Serial		= slot.ui64Serial;
+		iSpeakerID		= slot.iSpeakerID;
+		sSprakerName	= slot.sSprakerName;
+		iIconID			= slot.iIconID;
+		sContents		= slot.sContents;
+		Targetname		= slot.Targetname;
+		savetime		= slot.savetime;
+		emMsgSlotType 	= slot.emMsgSlotType;
+		emMsgBdType		= slot.emMsgBdType;
+
+		SetDisPlay(RLType);
+	}
+	//---------------------------------------------------------------------
+	//設定顯示
+	public void SetDisPlay(ChatSlotRLType RLType)
+	{ 
+		//依類型改變顯示方式
+		switch(RLType)
+		{
+		case ChatSlotRLType.L_Type:
+			L_btnIcon.gameObject.SetActive(true);
+			L_labelName.gameObject.SetActive(true);
+			L_labelContents.transform.parent.gameObject.SetActive(true);
+
+			R_btnIcon.gameObject.SetActive(false);
+			R_labelName.gameObject.SetActive(false);
+			R_labelContents.transform.parent.gameObject.SetActive(false);
+
+
+			if(this != null)
+			{
+				Utility.ChangeAtlasSprite(L_spriteIcon,iIconID);
+				L_labelName.text = sSprakerName;
+				L_labelContents.text = sContents;
+			}
+
+			break;
+		case ChatSlotRLType.R_Type:
+			L_btnIcon.gameObject.SetActive(false);
+			L_labelName.gameObject.SetActive(false);
+			L_labelContents.transform.parent.gameObject.SetActive(false);
+			
+			R_btnIcon.gameObject.SetActive(true);
+			R_labelName.gameObject.SetActive(true);
+			R_labelContents.transform.parent.gameObject.SetActive(true);
+
+
+			if(this != null)
+			{
+				if(emMsgBdType == ENUM_MESSAGEBOARDTYPE.ENUM_MESSAGEBOARD_PERSON)
+				{
+					sSprakerName = string.Format("你對 {0} 說","某某某");
+				}
+
+				Utility.ChangeAtlasSprite(R_spriteIcon,iIconID);
+				R_labelName.text = sSprakerName;
+				R_labelContents.text = sContents;
+			}
+			break;
+
+		case ChatSlotRLType.NULL:
+			break;
+		}
+
+	}
+
+}
